@@ -5,8 +5,6 @@ import { motion, useReducedMotion } from "motion/react";
 import { Clock, MapPin, Navigation, RouteOff } from "lucide-react";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { duration, easeOut, springBounce } from "@/lib/motion";
-import { formatMoney } from "@/lib/pricing";
-import type { Locale } from "@/i18n/config";
 import { useT } from "@/i18n/LanguageProvider";
 
 // ── Branding colours ─────────────────────────────────────────────────────────
@@ -55,8 +53,7 @@ type RouteMapProps = {
   finding?: boolean;
   className?: string;
   /** When provided, shows a fare chip in the journey info panel */
-  quote?: number;
-  locale?: Locale;
+  fareDisplay?: string;
 };
 
 export function RouteMap({
@@ -68,8 +65,7 @@ export function RouteMap({
   destinationLng,
   finding = false,
   className = "",
-  quote,
-  locale = "en",
+  fareDisplay,
 }: RouteMapProps) {
   const { t } = useT();
   const reduce = useReducedMotion();
@@ -324,17 +320,16 @@ export function RouteMap({
       </div>
 
       {/* Journey info panel */}
-      {(routeInfo || quote) && status === "ready" && (
+      {(routeInfo || fareDisplay) && status === "ready" && (
         <JourneyInfo
           pickup={pickup}
           destination={destination}
           routeInfo={routeInfo}
-          quote={quote}
-          locale={locale}
+          fareDisplay={fareDisplay}
           reduce={reduce}
           distanceLabel={t.booking.distance}
           driveTimeLabel={t.booking.driveTime}
-          fareLabel={t.booking.estFare}
+          fareLabel={t.booking.labels.fare}
         />
       )}
     </motion.div>
@@ -346,8 +341,7 @@ function JourneyInfo({
   pickup,
   destination,
   routeInfo,
-  quote,
-  locale,
+  fareDisplay,
   reduce,
   distanceLabel,
   driveTimeLabel,
@@ -356,8 +350,7 @@ function JourneyInfo({
   pickup: string;
   destination: string;
   routeInfo: RouteInfo | null;
-  quote?: number;
-  locale: Locale;
+  fareDisplay?: string;
   reduce: boolean | null;
   distanceLabel: string;
   driveTimeLabel: string;
@@ -394,14 +387,14 @@ function JourneyInfo({
             label={driveTimeLabel}
             value={routeInfo.durationText}
           />
-          {quote !== undefined && (
+          {fareDisplay ? (
             <StatChip
               icon={<span className="text-[10px] font-bold text-gold">€</span>}
               label={fareLabel}
-              value={formatMoney(quote, locale)}
+              value={fareDisplay}
               highlight
             />
-          )}
+          ) : null}
         </div>
       )}
     </motion.div>
@@ -517,7 +510,6 @@ export function FindingDriver({
   destinationLng?: number;
 }) {
   const reduce = useReducedMotion();
-  const { locale } = useT();
 
   return (
     <div className="grid gap-4">
@@ -528,7 +520,6 @@ export function FindingDriver({
         pickupLng={pickupLng}
         destinationLat={destinationLat}
         destinationLng={destinationLng}
-        locale={locale}
         finding
       />
       <div className="flex items-center justify-center gap-2 text-sm font-medium text-ink">

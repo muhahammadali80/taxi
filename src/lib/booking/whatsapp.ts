@@ -1,5 +1,5 @@
 import { SITE } from "@/lib/site";
-import { getVehicle } from "@/lib/site";
+import { isPlusFourPassengers } from "./passengers";
 import type { StoredBooking } from "./types";
 
 const DRIVER_NUMBER = process.env.WHATSAPP_DRIVER_NUMBER || SITE.whatsappNumber;
@@ -26,7 +26,6 @@ function mapsLink(label: string, lat: number | undefined, lng: number | undefine
 }
 
 export function driverBookingMessage(booking: StoredBooking) {
-  const vehicle = getVehicle(booking.vehicleClass);
   const lines = [
     "🚕 New Taxi Booking",
     "",
@@ -40,7 +39,7 @@ export function driverBookingMessage(booking: StoredBooking) {
     "",
     `📅 Date: ${booking.date}`,
     `🕐 Time: ${booking.time}`,
-    `👥 Passengers: ${booking.passengers}`,
+    `👥 Passengers: ${isPlusFourPassengers(booking.passengers) ? "+4" : booking.passengers}`,
     `🧳 Luggage: ${booking.luggage}`,
     `🚗 Vehicle: ${vehicleLabel(booking)}`,
     booking.notes ? `📝 Notes: ${booking.notes}` : "",

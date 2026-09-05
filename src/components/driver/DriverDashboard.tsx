@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { SITE } from "@/lib/site";
 import type { DriverBooking } from "@/lib/booking/types";
+import { formatPassengerChoice } from "@/lib/booking/passengers";
 import { useT } from "@/i18n/LanguageProvider";
 
 const STATUS_LABEL: Record<DriverBooking["status"], string> = {
@@ -207,7 +208,7 @@ export function DriverDashboard() {
               <div>
                 <dt className="text-muted">Passengers / luggage</dt>
                 <dd className="font-medium">
-                  {booking.passengers} · {booking.luggage}
+                  {formatPassengerChoice(booking.passengers, t.booking)} · {booking.luggage}
                 </dd>
               </div>
               <div>

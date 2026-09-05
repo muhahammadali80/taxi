@@ -3,8 +3,9 @@
 import { Check, MessageCircle, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfettiBurst } from "@/components/motion/ConfettiBurst";
-import { formatDateLabel, formatMoney } from "@/lib/pricing";
+import { formatDateLabel } from "@/lib/pricing";
 import { SITE, getWhatsAppHref } from "@/lib/site";
+import { formatPassengerChoice } from "@/lib/booking/passengers";
 import type { BookingStatus, VehicleClass } from "@/lib/types";
 import { useT } from "@/i18n/LanguageProvider";
 
@@ -59,13 +60,13 @@ export function BookingStatusView({
     [t.booking.labels.destination, booking.destination],
     [t.booking.labels.date, formatDateLabel(booking.date, locale)],
     [t.booking.labels.time, booking.time],
-    [t.booking.labels.passengers, String(booking.passengers)],
+    [t.booking.labels.passengers, formatPassengerChoice(booking.passengers, t.booking)],
     [t.booking.labels.luggage, String(booking.luggage)],
     [t.booking.labels.vehicle, t.vehicles[booking.vehicleClass]],
     [t.booking.labels.name, booking.name],
   ];
   if (booking.phone) rows.push([t.booking.labels.phone, booking.phone]);
-  rows.push([t.booking.labels.fare, formatMoney(booking.quote, locale)]);
+  rows.push([t.booking.labels.fare, t.booking.requestPrice]);
   if (booking.returnJourney) {
     rows.splice(4, 0, [
       t.booking.labels.return,

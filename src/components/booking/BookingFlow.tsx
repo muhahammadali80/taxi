@@ -24,9 +24,10 @@ import { FindingDriver, RouteMap } from "@/components/motion/RouteMap";
 import { SelectedCheck } from "@/components/motion/SelectedCheck";
 import { useToast } from "@/components/motion/ToastProvider";
 import { NeuToggle } from "@/components/ui/NeuToggle";
-import { estimateQuote, formatDateLabel, formatMoney, todayISO, currentTimePlus } from "@/lib/pricing";
+import { formatDateLabel, todayISO, currentTimePlus } from "@/lib/pricing";
 import { VEHICLES, getVehicle } from "@/lib/site";
 import { parseCustomerPhone } from "@/lib/phone";
+import { PLUS_FOUR_PASSENGERS, formatPassengerChoice } from "@/lib/booking/passengers";
 import { emptyBooking, type BookingData, type BookingRecord, type VehicleClass } from "@/lib/types";
 import { useBookingLive } from "./useBookingLive";
 import { BookingStatusView } from "./BookingStatusView";
@@ -109,7 +110,11 @@ function validateStep(step: number, data: BookingData, copy: Messages["errors"])
 
   if (step === 2) {
     const selected = getVehicle(data.vehicleClass);
-    if (data.passengers < 1 || data.passengers > selected.passengers) {
+    if (data.passengers >= PLUS_FOUR_PASSENGERS) {
+      if (data.vehicleClass !== "van") {
+        errors.passengers = copy.passengers.replace("{n}", String(selected.passengers));
+      }
+    } else if (data.passengers < 1 || data.passengers > selected.passengers) {
       errors.passengers = copy.passengers.replace("{n}", String(selected.passengers));
     }
     if (data.luggage < 0 || data.luggage > selected.luggage) errors.luggage = copy.luggage;
@@ -139,7 +144,7 @@ function StepPanel({ children, reduce }: { children: React.ReactNode; reduce: bo
 
 export function BookingPanel() {
   const { openBooking, draft, setDraft } = useBooking();
-  const { t, locale } = useT();
+  const { t } = useT();
   const { pushToast } = useToast();
   const [errors, setErrors] = useState<Errors>({});
   const routeToast = useRef("");
@@ -248,7 +253,6 @@ export function BookingPanel() {
             pickupLng={draft.pickupLng}
             destinationLat={draft.destinationLat}
             destinationLng={draft.destinationLng}
-            locale={locale}
             className="mt-4"
           />
 
@@ -335,13 +339,11 @@ function BookingDialog({
   const { t, locale } = useT();
   const { pushToast } = useToast();
   const [step, setStep] = useState(startStep);
-  const quoteToast = useRef(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [record, setRecord] = useState<BookingRecord | null>(null);
   const idempotencyKey = useRef("");
-  const quote = estimateQuote(draft);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -350,12 +352,6 @@ function BookingDialog({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [closeBooking]);
-
-  useEffect(() => {
-    if (step !== 2 || quoteToast.current) return;
-    quoteToast.current = true;
-    pushToast(t.toasts.quoteReady);
-  }, [step, pushToast, t.toasts.quoteReady]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -377,9 +373,40 @@ function BookingDialog({
     };
   }, []);
 
+  useEffect(() => {
+    if (draft.passengers < PLUS_FOUR_PASSENGERS || draft.vehicleClass === "van") return;
+    const van = getVehicle("van");
+    setDraft({
+      ...draft,
+      vehicleClass: "van",
+      luggage: Math.min(draft.luggage, van.luggage),
+    });
+  }, [draft, setDraft]);
+
   function update<K extends keyof BookingData>(key: K, value: BookingData[K]) {
     setDraft({ ...draft, [key]: value });
     setErrors((current) => ({ ...current, [key]: undefined }));
+  }
+
+  function selectVehicle(vehicleId: VehicleClass) {
+    const plusFour = draft.passengers >= PLUS_FOUR_PASSENGERS;
+    // +4 passengers always requires the larger van; keep that selection.
+    if (plusFour && vehicleId !== "van") {
+      const van = getVehicle("van");
+      setDraft({
+        ...draft,
+        vehicleClass: "van",
+        luggage: Math.min(draft.luggage, van.luggage),
+      });
+      return;
+    }
+    const vehicle = getVehicle(vehicleId);
+    setDraft({
+      ...draft,
+      vehicleClass: vehicleId,
+      passengers: Math.min(draft.passengers, vehicle.passengers),
+      luggage: Math.min(draft.luggage, vehicle.luggage),
+    });
   }
 
   function goNext() {
@@ -412,7 +439,7 @@ function BookingDialog({
           "Content-Type": "application/json",
           "Idempotency-Key": idempotencyKey.current,
         },
-        body: JSON.stringify({ ...draft, quote, locale }),
+        body: JSON.stringify({ ...draft, quote: 0, locale }),
       });
       const data = (await res.json()) as {
         booking?: PublicBooking & { viewToken?: string };
@@ -658,8 +685,7 @@ function BookingDialog({
                           pickupLng={draft.pickupLng}
                           destinationLat={draft.destinationLat}
                           destinationLng={draft.destinationLng}
-                          quote={quote}
-                          locale={locale}
+                          fareDisplay={t.booking.requestPrice}
                         />
                       </div>
                     </StepPanel>
@@ -676,14 +702,7 @@ function BookingDialog({
                             <button
                               key={vehicle.id}
                               type="button"
-                              onClick={() => {
-                                setDraft({
-                                  ...draft,
-                                  vehicleClass: vehicle.id,
-                                  passengers: Math.min(draft.passengers, vehicle.passengers),
-                                  luggage: Math.min(draft.luggage, vehicle.luggage),
-                                });
-                              }}
+                              onClick={() => selectVehicle(vehicle.id)}
                               className={`car-card overflow-hidden rounded-[1.35rem] text-left ${
                                 selected ? "car-card-selected neu-inset outline outline-2 outline-gold" : "neu-raised-sm"
                               }`}
@@ -720,14 +739,7 @@ function BookingDialog({
                               <button
                                 key={vehicle.id}
                                 type="button"
-                                onClick={() => {
-                                  setDraft({
-                                    ...draft,
-                                    vehicleClass: vehicle.id,
-                                    passengers: Math.min(draft.passengers, vehicle.passengers),
-                                    luggage: Math.min(draft.luggage, vehicle.luggage),
-                                  });
-                                }}
+                                onClick={() => selectVehicle(vehicle.id)}
                                 className={`car-card overflow-hidden rounded-[1.35rem] text-left ${
                                   selected ? "car-card-selected neu-inset outline outline-2 outline-gold" : "neu-raised-sm"
                                 }`}
@@ -758,18 +770,30 @@ function BookingDialog({
                           <Field id="passengers" label={t.booking.passengers} error={errors.passengers} icon={Users}>
                             <select
                               id="passengers"
-                              value={draft.passengers}
-                              onChange={(event) => update("passengers", Number(event.target.value))}
+                              value={draft.passengers >= PLUS_FOUR_PASSENGERS ? PLUS_FOUR_PASSENGERS : draft.passengers}
+                              onChange={(event) => {
+                                const passengers = Number(event.target.value);
+                                if (passengers >= PLUS_FOUR_PASSENGERS) {
+                                  const van = getVehicle("van");
+                                  setDraft({
+                                    ...draft,
+                                    passengers,
+                                    vehicleClass: "van",
+                                    luggage: Math.min(draft.luggage, van.luggage),
+                                  });
+                                  setErrors((current) => ({ ...current, passengers: undefined }));
+                                  return;
+                                }
+                                update("passengers", passengers);
+                              }}
                               className="input-field appearance-none"
                             >
-                              {Array.from(
-                                { length: getVehicle(draft.vehicleClass).passengers },
-                                (_, i) => i + 1,
-                              ).map((n) => (
+                              {[1, 2, 3, 4].map((n) => (
                                 <option key={n} value={n}>
                                   {n} {n === 1 ? t.booking.passengerOne : t.booking.passengerMany}
                                 </option>
                               ))}
+                              <option value={PLUS_FOUR_PASSENGERS}>{t.booking.plusFourPassengers}</option>
                             </select>
                           </Field>
                           <Field id="luggage" label={t.booking.luggage} error={errors.luggage} icon={Luggage}>
@@ -792,11 +816,9 @@ function BookingDialog({
                       </div>
                       <div className="mt-8">
                         <FareDial
-                          value={quote}
-                          locale={locale}
-                          label={t.booking.estFare}
+                          label={t.booking.labels.fare}
+                          display={t.booking.requestPrice}
                           note={t.booking.fareNote}
-                          calculatingLabel={t.booking.calculating}
                         />
                       </div>
                     </StepPanel>
@@ -879,7 +901,7 @@ function BookingDialog({
                           destinationLng={draft.destinationLng}
                         />
                       ) : (
-                        <Summary draft={draft} quote={quote} />
+                        <Summary draft={draft} />
                       )}
                     </StepPanel>
                   ) : null}
@@ -918,19 +940,19 @@ function BookingDialog({
   );
 }
 
-function Summary({ draft, quote }: { draft: BookingData; quote: number }) {
+function Summary({ draft }: { draft: BookingData }) {
   const { t, locale } = useT();
   const rows = [
     [t.booking.labels.pickup, draft.pickup],
     [t.booking.labels.destination, draft.destination],
     [t.booking.labels.date, formatDateLabel(draft.date, locale)],
     [t.booking.labels.time, draft.time],
-    [t.booking.labels.passengers, String(draft.passengers)],
+    [t.booking.labels.passengers, formatPassengerChoice(draft.passengers, t.booking)],
     [t.booking.labels.luggage, String(draft.luggage)],
     [t.booking.labels.vehicle, t.vehicles[draft.vehicleClass]],
     [t.booking.labels.name, draft.name],
     [t.booking.labels.phone, draft.phone],
-    [t.booking.labels.fare, formatMoney(quote, locale)],
+    [t.booking.labels.fare, t.booking.requestPrice],
   ];
   if (draft.returnJourney) rows.splice(4, 0, [t.booking.labels.return, `${formatDateLabel(draft.returnDate, locale)} · ${draft.returnTime}`]);
 

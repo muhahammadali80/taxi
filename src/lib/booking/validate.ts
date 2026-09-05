@@ -1,6 +1,7 @@
 import { getVehicle } from "@/lib/site";
 import { parseCustomerPhone } from "@/lib/phone";
 import { todayISO } from "@/lib/pricing";
+import { PLUS_FOUR_PASSENGERS } from "@/lib/booking/passengers";
 import { normalizeVehicleClass, type BookingData } from "@/lib/types";
 
 export type BookingPayload = BookingData & {
@@ -17,9 +18,10 @@ export function validateBookingPayload(input: Partial<BookingPayload>) {
   const name = String(input.name ?? "").trim();
   const phone = parseCustomerPhone(String(input.phone ?? ""));
   const email = String(input.email ?? "").trim();
-  const vehicleClass = normalizeVehicleClass(String(input.vehicleClass ?? "prius"));
-  const vehicle = getVehicle(vehicleClass);
+  let vehicleClass = normalizeVehicleClass(String(input.vehicleClass ?? "prius"));
   const passengers = Number(input.passengers ?? 0);
+  if (passengers >= PLUS_FOUR_PASSENGERS) vehicleClass = "van";
+  const vehicle = getVehicle(vehicleClass);
   const luggage = Number(input.luggage ?? 0);
   const today = todayISO();
 
@@ -68,7 +70,7 @@ export function validateBookingPayload(input: Partial<BookingPayload>) {
           phone: phone.e164,
           email,
           notes: String(input.notes ?? "").trim(),
-          quote: Number(input.quote ?? 0),
+          quote: 0,
           locale: String(input.locale ?? "en"),
         }
       : null,

@@ -1,3 +1,5 @@
+import { isPlusFourPassengers } from "@/lib/booking/passengers";
+
 export const SITE = {
   name: "TapTaxiBcn",
   shortName: "TapTaxiBcn",
@@ -40,9 +42,10 @@ export function getWhatsAppBookingHref(draft: {
   if (draft.destination) lines.push(`To: ${draft.destination}`);
   if (draft.date) lines.push(`Date: ${draft.date}`);
   if (draft.time) lines.push(`Time: ${draft.time}`);
-  if (draft.passengers) lines.push(`Passengers: ${draft.passengers}`);
+  if (draft.passengers) {
+    lines.push(`Passengers: ${isPlusFourPassengers(draft.passengers) ? "+4" : draft.passengers}`);
+  }
   if (draft.vehicleClass) lines.push(`Vehicle: ${draft.vehicleClass}`);
-  if (draft.quote) lines.push(`Est. fare: €${draft.quote}`);
   return `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 

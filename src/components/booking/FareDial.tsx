@@ -1,34 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { formatMoney } from "@/lib/pricing";
-import { useCountUp } from "@/hooks/useCountUp";
 import { duration, easeOut } from "@/lib/motion";
-import type { Locale } from "@/i18n/config";
 
 type FareDialProps = {
-  value: number;
-  locale: Locale;
   label: string;
+  display: string;
   note: string;
-  calculatingLabel: string;
 };
 
-export function FareDial({ value, locale, label, note, calculatingLabel }: FareDialProps) {
+export function FareDial({ label, display, note }: FareDialProps) {
   const reduce = useReducedMotion();
-  const [ready, setReady] = useState(Boolean(reduce));
-  const counted = useCountUp(value, { duration: 700, enabled: ready });
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
-  const progress = ready ? Math.min(1, Math.max(0.08, value / 80)) : 0.12;
-  const dash = circumference * progress;
-
-  useEffect(() => {
-    setReady(Boolean(reduce));
-    const timer = window.setTimeout(() => setReady(true), reduce ? 0 : 650);
-    return () => window.clearTimeout(timer);
-  }, [value, reduce]);
+  const dash = circumference * 0.42;
 
   return (
     <div className="flex flex-col items-center">
@@ -52,10 +37,10 @@ export function FareDial({ value, locale, label, note, calculatingLabel }: FareD
           </svg>
           <div className="relative px-2 text-center">
             <p className="text-[0.62rem] font-semibold leading-tight tracking-[0.08em] text-charcoal uppercase">
-              {ready ? label : calculatingLabel}
+              {label}
             </p>
-            <p className="text-lg font-semibold tracking-tight text-ink sm:text-2xl">
-              {formatMoney(ready ? counted : 0, locale)}
+            <p className="mt-0.5 max-w-[6.4rem] text-[0.82rem] font-semibold leading-tight tracking-tight text-ink sm:max-w-[7.4rem] sm:text-base">
+              {display}
             </p>
           </div>
         </div>
