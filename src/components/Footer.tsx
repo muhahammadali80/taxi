@@ -27,11 +27,6 @@ export function Footer() {
                 {SITE.phoneDisplay}
               </a>
             </li>
-            <li>
-              <a href={`mailto:${SITE.email}`} className="flex min-h-11 items-center break-all hover:text-gold">
-                {SITE.email}
-              </a>
-            </li>
             <li className="py-2">{t.footer.hours}</li>
           </ul>
         </div>

@@ -6,7 +6,6 @@ export const SITE = {
   phoneDisplay: "+34 631 55 51 71",
   phoneHref: "tel:+34631555171",
   whatsappNumber: "34631555171",
-  email: "reservas@hammad.taxi",
   vehicle: {
     name: "Toyota Prius+",
   },

@@ -17,7 +17,6 @@ export default function Home() {
     "@type": "TaxiService",
     name: SITE.name,
     telephone: SITE.phoneHref.replace("tel:", ""),
-    email: SITE.email,
     areaServed: "Barcelona",
     description: "Reliable taxi service across Barcelona and surrounding areas.",
   };

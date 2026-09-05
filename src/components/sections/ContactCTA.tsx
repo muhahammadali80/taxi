@@ -57,10 +57,6 @@ export function ContactCTA() {
                   <a href={SITE.phoneHref} className="hover:text-gold">
                     {SITE.phoneDisplay}
                   </a>
-                  <span className="mx-1.5">·</span>
-                  <a href={`mailto:${SITE.email}`} className="break-all hover:text-gold">
-                    {SITE.email}
-                  </a>
                 </>
               ) : null}
             </p>
