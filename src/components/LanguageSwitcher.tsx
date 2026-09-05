@@ -29,12 +29,12 @@ export function LanguageSwitcher({ tone = "dark", compact = false, showNames = f
           type="button"
           onClick={() => setLocale(code)}
           aria-pressed={locale === code}
-          className={`rounded-full font-semibold tracking-wide ${
+          className={`rounded-full font-semibold ${
             showNames
-              ? "flex min-h-12 flex-1 flex-col items-center justify-center px-1.5 text-[11px] leading-tight"
+              ? "flex min-h-12 flex-1 flex-col items-center justify-center px-1.5 text-[11px] leading-tight tracking-wide"
               : compact
-                ? "min-h-11 min-w-11 px-1.5 text-[11px]"
-                : "min-h-11 flex-1 px-2 text-xs"
+                ? "flex min-h-11 min-w-11 items-center justify-center px-1.5 text-[11px] tracking-normal"
+                : "min-h-11 flex-1 px-2 text-xs tracking-wide"
           } ${locale === code ? active : idle}`}
         >
           <span>{LOCALE_META[code].code}</span>
