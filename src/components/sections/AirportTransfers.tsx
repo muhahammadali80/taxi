@@ -3,12 +3,10 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/Button";
-import { useBooking } from "@/components/booking/BookingProvider";
-import { IMAGES } from "@/lib/site";
+import { IMAGES, getWhatsAppHref } from "@/lib/site";
 import { useT } from "@/i18n/LanguageProvider";
 
 export function AirportTransfers() {
-  const { openBooking } = useBooking();
   const { t } = useT();
 
   return (
@@ -26,7 +24,7 @@ export function AirportTransfers() {
               </li>
             ))}
           </ul>
-          <Button onClick={() => openBooking()} className="mt-8 min-h-14">
+          <Button href={getWhatsAppHref(t.bookCta.whatsappMessage)} className="mt-8 min-h-14">
             {t.airport.cta}
           </Button>
         </Reveal>

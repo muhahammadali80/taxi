@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { MessageCircle, Phone } from "lucide-react";
-import { NAV_HREFS, SITE, getWhatsAppHref, getWhatsAppBookingHref } from "@/lib/site";
-import { useBooking } from "@/components/booking/BookingProvider";
+import { NAV_HREFS, SITE, getWhatsAppHref } from "@/lib/site";
 import { useMobileMenu } from "@/components/MobileMenuContext";
 import { useT } from "@/i18n/LanguageProvider";
 
 export function Footer() {
-  const { openBooking } = useBooking();
   const { t } = useT();
 
   return (
@@ -53,9 +51,14 @@ export function Footer() {
               </li>
             ))}
             <li>
-              <button type="button" onClick={() => openBooking()} className="flex min-h-11 items-center hover:text-gold">
+              <a
+                href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-11 items-center hover:text-gold"
+              >
                 {t.footer.bookTaxi}
-              </button>
+              </a>
             </li>
           </ul>
         </div>
@@ -92,23 +95,9 @@ export function Footer() {
 }
 
 export function MobileStickyBar() {
-  const { open, openBooking, draft } = useBooking();
   const { open: menuOpen } = useMobileMenu();
   const { t } = useT();
-  if (open || menuOpen) return null;
-
-  // Use journey-aware WhatsApp link when pickup/destination are filled
-  const hasJourney = Boolean(draft?.pickup?.trim() && draft?.destination?.trim());
-  const whatsappHref = hasJourney
-    ? getWhatsAppBookingHref({
-        pickup: draft.pickup,
-        destination: draft.destination,
-        date: draft.date,
-        time: draft.time,
-        passengers: draft.passengers,
-        vehicleClass: draft.vehicleClass,
-      })
-    : getWhatsAppHref(t.contact.whatsappMessage);
+  if (menuOpen) return null;
 
   return (
     <div className="fixed inset-x-2 bottom-0 z-40 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
@@ -120,15 +109,16 @@ export function MobileStickyBar() {
           <Phone className="size-5 shrink-0" />
           <span className="max-w-full truncate">{t.sticky.call}</span>
         </a>
-        <button
-          type="button"
-          onClick={() => openBooking()}
+        <a
+          href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex min-h-[3.75rem] min-w-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-gold px-1 text-center text-[0.7rem] leading-tight font-bold text-ink shadow-[0_8px_18px_-6px_rgba(26,26,26,0.4)] active:scale-95 sm:text-xs"
         >
           <span className="max-w-full truncate">{t.sticky.book}</span>
-        </button>
+        </a>
         <a
-          href={whatsappHref}
+          href={getWhatsAppHref(t.contact.whatsappMessage)}
           target="_blank"
           rel="noopener noreferrer"
           className="neu-raised-sm flex min-h-[3.75rem] min-w-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 text-center text-[0.7rem] leading-tight font-semibold text-ink active:scale-95 sm:text-xs"

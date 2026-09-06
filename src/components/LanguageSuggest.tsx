@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useBooking } from "@/components/booking/BookingProvider";
 import { useMobileMenu } from "@/components/MobileMenuContext";
 import { detectBrowserLocale, getStoredLocale, LOCALE_META } from "@/i18n/config";
 import { useT } from "@/i18n/LanguageProvider";
 
 export function LanguageSuggest() {
   const { locale, setLocale, t } = useT();
-  const { open } = useBooking();
   const { open: menuOpen } = useMobileMenu();
   const [suggested, setSuggested] = useState<typeof locale | null>(null);
 
@@ -18,7 +16,7 @@ export function LanguageSuggest() {
     if (browser !== locale) setSuggested(browser);
   }, [locale]);
 
-  if (!suggested || open || menuOpen) return null;
+  if (!suggested || menuOpen) return null;
   const name = LOCALE_META[suggested].name;
 
   return (

@@ -1,5 +1,5 @@
 import { Hero } from "@/components/sections/Hero";
-import { BookingPanel } from "@/components/booking/BookingFlow";
+import { BookCTA } from "@/components/sections/BookCTA";
 import { WhyChooseUs } from "@/components/sections/WhyChooseUs";
 import { Services } from "@/components/sections/Services";
 import { AirportTransfers } from "@/components/sections/AirportTransfers";
@@ -9,6 +9,7 @@ import { Areas } from "@/components/sections/Areas";
 import { Reviews } from "@/components/sections/Reviews";
 import { About } from "@/components/sections/About";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { Faq } from "@/components/sections/Faq";
 import { SITE } from "@/lib/site";
 
 export default function Home() {
@@ -28,7 +29,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
-      <BookingPanel />
+      <BookCTA />
       <WhyChooseUs />
       <Services />
       <AirportTransfers />
@@ -38,6 +39,7 @@ export default function Home() {
       <Reviews />
       <About />
       <ContactCTA />
+      <Faq />
     </>
   );
 }

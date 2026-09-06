@@ -6,11 +6,9 @@ import { MessageCircle, Phone } from "lucide-react";
 import { IMAGES, SITE, getWhatsAppHref } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/Button";
-import { useBooking } from "@/components/booking/BookingProvider";
 import { useT } from "@/i18n/LanguageProvider";
 
 export function ContactCTA() {
-  const { openBooking } = useBooking();
   const { t } = useT();
   const [linksReady, setLinksReady] = useState(false);
 
@@ -38,7 +36,7 @@ export function ContactCTA() {
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm text-white/65 sm:text-base">{t.contact.text}</p>
             <div className="mt-6 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-8 sm:items-center sm:flex-row">
-              <Button onClick={() => openBooking()} className="min-h-14 w-full px-8 sm:w-auto">
+              <Button href={getWhatsAppHref(t.bookCta.whatsappMessage)} className="min-h-14 w-full px-8 sm:w-auto">
                 {t.contact.book}
               </Button>
               <Button href={SITE.phoneHref} variant="secondary" className="min-h-14 w-full px-8 sm:w-auto">

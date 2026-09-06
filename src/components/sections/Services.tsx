@@ -2,13 +2,12 @@
 
 import { Briefcase, CalendarCheck, MapPinned, Plane, Route, TrainFront } from "lucide-react";
 import { Reveal, RevealItem, RevealList } from "@/components/Reveal";
-import { useBooking } from "@/components/booking/BookingProvider";
+import { getWhatsAppHref } from "@/lib/site";
 import { useT } from "@/i18n/LanguageProvider";
 
 const icons = [MapPinned, Plane, Route, Briefcase, TrainFront, CalendarCheck];
 
 export function Services() {
-  const { openBooking } = useBooking();
   const { t } = useT();
 
   return (
@@ -23,14 +22,15 @@ export function Services() {
             const Icon = icons[index] ?? MapPinned;
             return (
               <RevealItem key={service.title}>
-                <button
-                  type="button"
-                  onClick={() => openBooking()}
+                <a
+                  href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="neu-raised flex min-h-36 w-full flex-col items-start rounded-[1.4rem] p-5 text-left sm:min-h-40 sm:rounded-[1.6rem] sm:p-6"
                 >
                   <Icon className="size-5 text-ink" aria-hidden />
                   <span className="mt-5 text-lg font-semibold leading-snug">{service.title}</span>
-                </button>
+                </a>
               </RevealItem>
             );
           })}

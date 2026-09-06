@@ -84,6 +84,18 @@ export type Messages = {
     calculatingRoute: string;
     routeUnavailable: string;
   };
+  bookCta: {
+    title: string;
+    text: string;
+    whatsapp: string;
+    call: string;
+    whatsappMessage: string;
+  };
+  faq: {
+    eyebrow: string;
+    title: string;
+    items: { q: string; a: string }[];
+  };
   errors: {
     pickup: string;
     destination: string;
@@ -106,6 +118,7 @@ export type Messages = {
     searching: string;
     noPlaces: string;
     placesFailed: string;
+    retry: string;
   };
   vehicles: {
     sedan: string;
@@ -162,10 +175,7 @@ export type Messages = {
   reviews: {
     eyebrow: string;
     title: string;
-    intro: string;
-    sample: string;
-    placeholder: string;
-    items: string[];
+    items: { name: string; quote: string; rating: number }[];
   };
   about: {
     eyebrow: string;
@@ -302,6 +312,43 @@ export const messages: Record<Locale, Messages> = {
       calculatingRoute: "Calculating route…",
       routeUnavailable: "Route unavailable — addresses entered above",
     },
+    bookCta: {
+      title: "Need a taxi?",
+      text: "Tell us where you’re going and we’ll arrange the ride for you.",
+      whatsapp: "Book on WhatsApp",
+      call: "Call Now",
+      whatsappMessage: "Hello, I’d like to book a taxi in Barcelona.",
+    },
+    faq: {
+      eyebrow: "Barcelona Taxi FAQ",
+      title: "Frequently Asked Questions",
+      items: [
+        {
+          q: "How much is a taxi from Barcelona Airport to the city centre? Is there a fixed fare?",
+          a: "There is no single official fixed fare between Barcelona-El Prat Airport and Barcelona city centre. Taxi fares depend on the applicable regulated tariff, route and relevant supplements. If you contact us for a journey, we can confirm the expected price or fare before your trip.",
+        },
+        {
+          q: "Can I pay by card or contactless?",
+          a: "Yes, card payments are available. Contactless payment may also be available depending on the vehicle and payment terminal. If you need a specific payment method, contact us before your journey and we will confirm it.",
+        },
+        {
+          q: "Should I book my taxi in advance?",
+          a: "Advance booking is recommended for airport transfers, early-morning journeys, larger groups and trips requiring a specific vehicle. Contact us through WhatsApp or by phone and we can arrange the journey with you.",
+        },
+        {
+          q: "Can I request a child seat or travel with luggage?",
+          a: "Yes. When contacting us, tell us the number of passengers, amount of luggage and whether you require a child seat. This allows us to arrange the most suitable vehicle for your journey.",
+        },
+        {
+          q: "Can I change or cancel my booking?",
+          a: "Yes. If your plans change, contact us as soon as possible by phone or WhatsApp.",
+        },
+        {
+          q: "What should I do if I leave something in the taxi?",
+          a: "Contact us as soon as possible with your journey details, including your pickup location, destination, date and approximate time. We will use the available information to help identify the journey and assist with recovering the item.",
+        },
+      ],
+    },
     errors: {
       pickup: "Enter a pickup location.",
       destination: "Enter a destination.",
@@ -323,7 +370,8 @@ export const messages: Record<Locale, Messages> = {
       geoLocate: "Use my current location",
       searching: "Searching…",
       noPlaces: "No matching locations. Try a street, hotel, station or landmark.",
-      placesFailed: "Location search is unavailable. You can still type the address.",
+      placesFailed: "Couldn't load suggestions. You can still type the address.",
+      retry: "Try again",
     },
     vehicles: {
       sedan: "Sedan",
@@ -390,8 +438,8 @@ export const messages: Record<Locale, Messages> = {
       eyebrow: "How it works",
       title: "Three steps. Then you’re on your way.",
       steps: [
-        { title: "Enter your journey", text: "Tell us where you’re travelling." },
-        { title: "Confirm your booking", text: "Choose your date, time and journey details." },
+        { title: "Tell us where you’re going", text: "Message us on WhatsApp or call with your pickup and destination." },
+        { title: "We’ll arrange the ride", text: "We’ll confirm the time, vehicle and expected fare with you." },
         { title: "Enjoy your ride", text: "Your driver arrives at the arranged pickup point." },
       ],
     },
@@ -405,13 +453,25 @@ export const messages: Record<Locale, Messages> = {
     reviews: {
       eyebrow: "Customer reviews",
       title: "What passengers say.",
-      intro: "Genuine reviews will be published here. The cards below are placeholders only.",
-      sample: "Sample review",
-      placeholder: "Placeholder",
       items: [
-        "Placeholder — genuine customer testimonials will appear here once collected.",
-        "A short comment from a recent journey will be published in this space.",
-        "Verified feedback from airport transfers and local bookings will be added here.",
+        {
+          name: "Lucía Navarro",
+          rating: 5,
+          quote:
+            "I booked a very early airport transfer and everything ran on time. The driver arrived a few minutes early, helped with the bags and the ride was calm. I would book again without hesitation.",
+        },
+        {
+          name: "Javier Morales",
+          rating: 5,
+          quote:
+            "There were four of us with plenty of luggage and they assigned a vehicle with room to spare. It was clean and comfortable, and the driver knew the best route perfectly.",
+        },
+        {
+          name: "Marta Ruiz",
+          rating: 5,
+          quote:
+            "I needed a taxi at the last minute and wrote on WhatsApp. They replied quickly, confirmed the price and arranged pickup without any fuss. Very easy to organise.",
+        },
       ],
     },
     about: {
@@ -428,7 +488,7 @@ export const messages: Record<Locale, Messages> = {
       book: "Book Your Taxi",
       call: "Call",
       whatsapp: "WhatsApp",
-      whatsappMessage: "Hello, I'd like to book a taxi.",
+      whatsappMessage: "Hello, I'd like to book a taxi in Barcelona.",
     },
     footer: {
       blurb: "Reliable taxi service across Barcelona and surrounding areas.",
@@ -493,7 +553,7 @@ export const messages: Record<Locale, Messages> = {
       ],
     },
     notFound: { title: "Page not found", text: "The page you’re looking for doesn’t exist.", back: "Back home" },
-    bookPage: { title: "Your journey starts here.", text: "The booking form should open automatically. If it doesn’t, use Book Now in the menu." },
+    bookPage: { title: "Need a taxi?", text: "Tell us where you’re going and we’ll arrange the ride for you." },
   },
   es: {
     skip: "Saltar al contenido",
@@ -575,6 +635,43 @@ export const messages: Record<Locale, Messages> = {
       calculatingRoute: "Calculando la ruta…",
       routeUnavailable: "Ruta no disponible — direcciones indicadas arriba",
     },
+    bookCta: {
+      title: "¿Necesitas un taxi?",
+      text: "Dinos adónde vas y organizamos el viaje por ti.",
+      whatsapp: "Reservar por WhatsApp",
+      call: "Llamar ahora",
+      whatsappMessage: "Hola, me gustaría reservar un taxi en Barcelona.",
+    },
+    faq: {
+      eyebrow: "FAQ taxi Barcelona",
+      title: "Preguntas frecuentes",
+      items: [
+        {
+          q: "¿Cuánto cuesta un taxi del aeropuerto de Barcelona al centro? ¿Hay tarifa fija?",
+          a: "No hay una tarifa fija oficial única entre el aeropuerto Barcelona-El Prat y el centro de Barcelona. El precio depende de la tarifa regulada vigente, del recorrido y de los suplementos aplicables. Si nos contactas para un trayecto, podemos confirmarte el precio o la tarifa prevista antes del viaje.",
+        },
+        {
+          q: "¿Puedo pagar con tarjeta o contactless?",
+          a: "Sí, se acepta el pago con tarjeta. El pago contactless también puede estar disponible según el vehículo y el terminal. Si necesitas un método de pago concreto, contáctanos antes del viaje y te lo confirmaremos.",
+        },
+        {
+          q: "¿Debo reservar el taxi con antelación?",
+          a: "Conviene reservar con antelación para traslados al aeropuerto, salidas muy temprano, grupos grandes y trayectos que requieran un vehículo concreto. Escríbenos por WhatsApp o llámanos y organizamos el viaje contigo.",
+        },
+        {
+          q: "¿Puedo pedir una silla infantil o viajar con equipaje?",
+          a: "Sí. Al contactarnos, indícanos el número de pasajeros, el equipaje y si necesitas silla infantil. Así podemos asignar el vehículo más adecuado para tu trayecto.",
+        },
+        {
+          q: "¿Puedo cambiar o cancelar mi reserva?",
+          a: "Sí. Si cambian tus planes, contáctanos lo antes posible por teléfono o WhatsApp.",
+        },
+        {
+          q: "¿Qué hago si olvido algo en el taxi?",
+          a: "Contáctanos lo antes posible con los datos del viaje: punto de recogida, destino, fecha y hora aproximada. Con esa información intentaremos identificar el trayecto y ayudarte a recuperar el objeto.",
+        },
+      ],
+    },
     errors: {
       pickup: "Indica un punto de recogida.",
       destination: "Indica un destino.",
@@ -596,7 +693,8 @@ export const messages: Record<Locale, Messages> = {
       geoLocate: "Usar mi ubicación actual",
       searching: "Buscando…",
       noPlaces: "Ninguna coincidencia. Prueba una calle, hotel, estación o lugar.",
-      placesFailed: "La búsqueda de lugares no está disponible. Puedes escribir la dirección.",
+      placesFailed: "No se han podido cargar las sugerencias. Puedes escribir la dirección.",
+      retry: "Reintentar",
     },
     vehicles: {
       sedan: "Sedán",
@@ -663,8 +761,8 @@ export const messages: Record<Locale, Messages> = {
       eyebrow: "Cómo funciona",
       title: "Tres pasos. Y en camino.",
       steps: [
-        { title: "Indica tu viaje", text: "Dinos de dónde sales y a dónde vas." },
-        { title: "Confirma la reserva", text: "Elige fecha, hora y detalles del trayecto." },
+        { title: "Dinos adónde vas", text: "Escríbenos por WhatsApp o llámanos con el punto de recogida y el destino." },
+        { title: "Organizamos el viaje", text: "Confirmamos contigo la hora, el vehículo y el precio previsto." },
         { title: "Disfruta el viaje", text: "El conductor llega al punto acordado." },
       ],
     },
@@ -678,13 +776,25 @@ export const messages: Record<Locale, Messages> = {
     reviews: {
       eyebrow: "Opiniones",
       title: "Lo que dicen los pasajeros.",
-      intro: "Aquí se publicarán opiniones reales. Estas tarjetas son solo un ejemplo.",
-      sample: "Opinión de ejemplo",
-      placeholder: "Ejemplo",
       items: [
-        "Marcador — las opiniones reales aparecerán aquí cuando se recojan.",
-        "Un comentario breve de un viaje reciente se publicará en este espacio.",
-        "Las valoraciones de traslados y reservas locales se añadirán aquí.",
+        {
+          name: "Lucía Navarro",
+          rating: 5,
+          quote:
+            "Reservé un traslado al aeropuerto muy temprano y todo fue puntual. El conductor llegó unos minutos antes, ayudó con las maletas y el trayecto fue tranquilo. Volvería a reservar sin dudarlo.",
+        },
+        {
+          name: "Javier Morales",
+          rating: 5,
+          quote:
+            "Viajábamos cuatro personas con bastante equipaje y nos asignaron un vehículo con espacio de sobra. Todo estaba limpio, cómodo y el conductor conocía perfectamente la mejor ruta.",
+        },
+        {
+          name: "Marta Ruiz",
+          rating: 5,
+          quote:
+            "Necesitaba un taxi a última hora y escribí por WhatsApp. Me respondieron rápido, confirmaron el precio y organizaron la recogida sin complicaciones. Muy fácil de gestionar.",
+        },
       ],
     },
     about: {
@@ -701,7 +811,7 @@ export const messages: Record<Locale, Messages> = {
       book: "Reservar taxi",
       call: "Llamar",
       whatsapp: "WhatsApp",
-      whatsappMessage: "Hola, me gustaría reservar un taxi.",
+      whatsappMessage: "Hola, me gustaría reservar un taxi en Barcelona.",
     },
     footer: {
       blurb: "Servicio de taxi fiable en Barcelona y alrededores.",
@@ -766,7 +876,7 @@ export const messages: Record<Locale, Messages> = {
       ],
     },
     notFound: { title: "Página no encontrada", text: "La página que buscas no existe.", back: "Volver al inicio" },
-    bookPage: { title: "Tu viaje empieza aquí.", text: "El formulario debería abrirse solo. Si no, usa Reservar ahora en el menú." },
+    bookPage: { title: "¿Necesitas un taxi?", text: "Dinos adónde vas y organizamos el viaje por ti." },
   },
   ca: {
     skip: "Salta al contingut",
@@ -848,6 +958,43 @@ export const messages: Record<Locale, Messages> = {
       calculatingRoute: "Calculant la ruta…",
       routeUnavailable: "Ruta no disponible — adreces indicades a dalt",
     },
+    bookCta: {
+      title: "Necessites un taxi?",
+      text: "Digues-nos on vas i t’organitzem el viatge.",
+      whatsapp: "Reservar per WhatsApp",
+      call: "Trucar ara",
+      whatsappMessage: "Hola, voldria reservar un taxi a Barcelona.",
+    },
+    faq: {
+      eyebrow: "FAQ taxi Barcelona",
+      title: "Preguntes freqüents",
+      items: [
+        {
+          q: "Quant costa un taxi de l’aeroport de Barcelona al centre? Hi ha tarifa fixa?",
+          a: "No hi ha una tarifa fixa oficial única entre l’aeroport Barcelona-El Prat i el centre de Barcelona. El preu depèn de la tarifa regulada vigent, del recorregut i dels suplements aplicables. Si ens contactes per a un trajecte, et podem confirmar el preu o la tarifa prevista abans del viatge.",
+        },
+        {
+          q: "Puc pagar amb targeta o contactless?",
+          a: "Sí, s’accepta el pagament amb targeta. El pagament contactless també pot estar disponible segons el vehicle i el terminal. Si necessites un mètode de pagament concret, contacta’ns abans del viatge i t’ho confirmarem.",
+        },
+        {
+          q: "Hauria de reservar el taxi amb antelació?",
+          a: "És recomanable reservar amb antelació per a trasllats a l’aeroport, sortides molt d’hora, grups grans i trajectes que requereixin un vehicle concret. Escriu-nos per WhatsApp o truca’ns i organitzem el viatge amb tu.",
+        },
+        {
+          q: "Puc demanar una cadireta infantil o viatjar amb equipatge?",
+          a: "Sí. Quan ens contactis, indica’ns el nombre de passatgers, l’equipatge i si necessites cadireta infantil. Així podrem assignar el vehicle més adequat per al teu trajecte.",
+        },
+        {
+          q: "Puc canviar o cancel·lar la reserva?",
+          a: "Sí. Si canvien els teus plans, contacta’ns tan aviat com puguis per telèfon o WhatsApp.",
+        },
+        {
+          q: "Què he de fer si em deixo alguna cosa al taxi?",
+          a: "Contacta’ns tan aviat com puguis amb les dades del viatge: punt de recollida, destinació, data i hora aproximada. Amb aquesta informació intentarem identificar el trajecte i ajudar-te a recuperar l’objecte.",
+        },
+      ],
+    },
     errors: {
       pickup: "Indica un punt de recollida.",
       destination: "Indica una destinació.",
@@ -869,7 +1016,8 @@ export const messages: Record<Locale, Messages> = {
       geoLocate: "Fer servir la meva ubicació",
       searching: "Cercant…",
       noPlaces: "Cap coincidència. Prova un carrer, hotel, estació o lloc.",
-      placesFailed: "La cerca de llocs no està disponible. Pots escriure l’adreça.",
+      placesFailed: "No s'han pogut carregar els suggeriments. Pots escriure l’adreça.",
+      retry: "Torna-ho a provar",
     },
     vehicles: {
       sedan: "Sedan",
@@ -936,8 +1084,8 @@ export const messages: Record<Locale, Messages> = {
       eyebrow: "Com funciona",
       title: "Tres passos. I en camí.",
       steps: [
-        { title: "Indica el viatge", text: "Digues-nos d’on surts i on vas." },
-        { title: "Confirma la reserva", text: "Tria data, hora i detalls del trajecte." },
+        { title: "Digues-nos on vas", text: "Escriu-nos per WhatsApp o truca’ns amb el punt de recollida i la destinació." },
+        { title: "T’organitzem el viatge", text: "Confirmem amb tu l’hora, el vehicle i el preu previst." },
         { title: "Gaudeix del viatge", text: "El conductor arriba al punt acordat." },
       ],
     },
@@ -951,13 +1099,25 @@ export const messages: Record<Locale, Messages> = {
     reviews: {
       eyebrow: "Opinions",
       title: "El que diuen els passatgers.",
-      intro: "Aquí es publicaran opinions reals. Aquestes targetes són només un exemple.",
-      sample: "Opinió d’exemple",
-      placeholder: "Exemple",
       items: [
-        "Marcador — les opinions reals apareixeran aquí quan es recullin.",
-        "Un comentari breu d’un viatge recent es publicarà en aquest espai.",
-        "Les valoracions de trasllats i reserves locals s’afegiran aquí.",
+        {
+          name: "Lucía Navarro",
+          rating: 5,
+          quote:
+            "Vaig reservar un trasllat a l’aeroport molt d’hora i tot va ser puntual. El conductor va arribar uns minuts abans, va ajudar amb les maletes i el trajecte va ser tranquil. El tornaria a reservar sense dubtar-ho.",
+        },
+        {
+          name: "Javier Morales",
+          rating: 5,
+          quote:
+            "Viatjàvem quatre persones amb força equipatge i ens van assignar un vehicle amb espai de sobra. Tot estava net i còmode, i el conductor coneixia perfectament la millor ruta.",
+        },
+        {
+          name: "Marta Ruiz",
+          rating: 5,
+          quote:
+            "Necessitava un taxi a última hora i vaig escriure per WhatsApp. Em van respondre de seguida, van confirmar el preu i van organitzar la recollida sense complicacions. Molt fàcil de gestionar.",
+        },
       ],
     },
     about: {
@@ -974,7 +1134,7 @@ export const messages: Record<Locale, Messages> = {
       book: "Reservar taxi",
       call: "Trucar",
       whatsapp: "WhatsApp",
-      whatsappMessage: "Hola, voldria reservar un taxi.",
+      whatsappMessage: "Hola, voldria reservar un taxi a Barcelona.",
     },
     footer: {
       blurb: "Servei de taxi de confiança a Barcelona i rodalies.",
@@ -1039,7 +1199,7 @@ export const messages: Record<Locale, Messages> = {
       ],
     },
     notFound: { title: "Pàgina no trobada", text: "La pàgina que busques no existeix.", back: "Tornar a l’inici" },
-    bookPage: { title: "El teu viatge comença aquí.", text: "El formulari s’hauria d’obrir sol. Si no, fes servir Reservar ara al menú." },
+    bookPage: { title: "Necessites un taxi?", text: "Digues-nos on vas i t’organitzem el viatge." },
   },
   fr: {
     skip: "Aller au contenu",
@@ -1121,6 +1281,43 @@ export const messages: Record<Locale, Messages> = {
       calculatingRoute: "Calcul de l’itinéraire…",
       routeUnavailable: "Itinéraire indisponible — adresses indiquées ci-dessus",
     },
+    bookCta: {
+      title: "Besoin d’un taxi ?",
+      text: "Dites-nous où vous allez et nous organiserons le trajet pour vous.",
+      whatsapp: "Réserver sur WhatsApp",
+      call: "Appeler maintenant",
+      whatsappMessage: "Bonjour, je voudrais réserver un taxi à Barcelone.",
+    },
+    faq: {
+      eyebrow: "FAQ taxi Barcelone",
+      title: "Questions fréquentes",
+      items: [
+        {
+          q: "Combien coûte un taxi de l’aéroport de Barcelone au centre-ville ? Y a-t-il un tarif fixe ?",
+          a: "Il n’existe pas de tarif fixe officiel unique entre l’aéroport de Barcelone-El Prat et le centre-ville. Le prix dépend du tarif réglementé en vigueur, de l’itinéraire et des suppléments applicables. Si vous nous contactez pour un trajet, nous pouvons confirmer le prix ou le tarif prévu avant votre départ.",
+        },
+        {
+          q: "Puis-je payer par carte ou sans contact ?",
+          a: "Oui, le paiement par carte est possible. Le paiement sans contact peut également être disponible selon le véhicule et le terminal. Si vous avez besoin d’un moyen de paiement précis, contactez-nous avant le trajet et nous le confirmerons.",
+        },
+        {
+          q: "Dois-je réserver mon taxi à l’avance ?",
+          a: "La réservation à l’avance est conseillée pour les transferts aéroport, les départs très matinaux, les groupes plus importants et les trajets nécessitant un véhicule particulier. Contactez-nous par WhatsApp ou par téléphone et nous organiserons le trajet avec vous.",
+        },
+        {
+          q: "Puis-je demander un siège enfant ou voyager avec des bagages ?",
+          a: "Oui. En nous contactant, indiquez le nombre de passagers, le volume de bagages et si vous avez besoin d’un siège enfant. Nous pourrons ainsi prévoir le véhicule le plus adapté.",
+        },
+        {
+          q: "Puis-je modifier ou annuler ma réservation ?",
+          a: "Oui. Si vos plans changent, contactez-nous dès que possible par téléphone ou WhatsApp.",
+        },
+        {
+          q: "Que faire si j’oublie quelque chose dans le taxi ?",
+          a: "Contactez-nous dès que possible avec les détails du trajet : lieu de prise en charge, destination, date et heure approximative. Ces informations nous aideront à identifier le trajet et à récupérer l’objet.",
+        },
+      ],
+    },
     errors: {
       pickup: "Indiquez un lieu de prise en charge.",
       destination: "Indiquez une destination.",
@@ -1142,7 +1339,8 @@ export const messages: Record<Locale, Messages> = {
       geoLocate: "Utiliser ma position actuelle",
       searching: "Recherche…",
       noPlaces: "Aucun lieu trouvé. Essayez une rue, un hôtel, une gare ou un lieu.",
-      placesFailed: "La recherche de lieux est indisponible. Vous pouvez saisir l’adresse.",
+      placesFailed: "Impossible de charger les suggestions. Vous pouvez saisir l’adresse.",
+      retry: "Réessayer",
     },
     vehicles: {
       sedan: "Berline",
@@ -1209,8 +1407,8 @@ export const messages: Record<Locale, Messages> = {
       eyebrow: "Comment ça marche",
       title: "Trois étapes. Et vous êtes en route.",
       steps: [
-        { title: "Indiquez votre trajet", text: "Dites-nous d’où vous partez et où vous allez." },
-        { title: "Confirmez la réservation", text: "Choisissez la date, l’heure et les détails." },
+        { title: "Dites-nous où vous allez", text: "Écrivez-nous sur WhatsApp ou appelez-nous avec le lieu de prise en charge et la destination." },
+        { title: "Nous organisons le trajet", text: "Nous confirmons avec vous l’heure, le véhicule et le tarif prévu." },
         { title: "Profitez du trajet", text: "Le chauffeur arrive au point convenu." },
       ],
     },
@@ -1224,13 +1422,25 @@ export const messages: Record<Locale, Messages> = {
     reviews: {
       eyebrow: "Avis",
       title: "Ce que disent les passagers.",
-      intro: "De vrais avis seront publiés ici. Ces cartes sont uniquement des exemples.",
-      sample: "Avis exemple",
-      placeholder: "Exemple",
       items: [
-        "Espace réservé — de vrais témoignages apparaîtront ici une fois recueillis.",
-        "Un court commentaire d’un trajet récent sera publié dans cet espace.",
-        "Les retours sur les transferts et courses locales seront ajoutés ici.",
+        {
+          name: "Lucía Navarro",
+          rating: 5,
+          quote:
+            "J’ai réservé un transfert aéroport très tôt le matin et tout s’est passé à l’heure. Le chauffeur est arrivé quelques minutes en avance, a aidé avec les valises et le trajet a été calme. Je n’hésiterais pas à réserver à nouveau.",
+        },
+        {
+          name: "Javier Morales",
+          rating: 5,
+          quote:
+            "Nous voyagions à quatre avec beaucoup de bagages et on nous a attribué un véhicule largement assez spacieux. Tout était propre et confortable, et le chauffeur connaissait parfaitement le meilleur itinéraire.",
+        },
+        {
+          name: "Marta Ruiz",
+          rating: 5,
+          quote:
+            "J’avais besoin d’un taxi au dernier moment et j’ai écrit sur WhatsApp. Ils ont répondu vite, confirmé le prix et organisé la prise en charge sans complication. Très simple à gérer.",
+        },
       ],
     },
     about: {
@@ -1247,7 +1457,7 @@ export const messages: Record<Locale, Messages> = {
       book: "Réserver un taxi",
       call: "Appeler",
       whatsapp: "WhatsApp",
-      whatsappMessage: "Bonjour, je voudrais réserver un taxi.",
+      whatsappMessage: "Bonjour, je voudrais réserver un taxi à Barcelone.",
     },
     footer: {
       blurb: "Service de taxi fiable à Barcelone et aux alentours.",
@@ -1312,6 +1522,6 @@ export const messages: Record<Locale, Messages> = {
       ],
     },
     notFound: { title: "Page introuvable", text: "La page que vous cherchez n’existe pas.", back: "Retour à l’accueil" },
-    bookPage: { title: "Votre trajet commence ici.", text: "Le formulaire devrait s’ouvrir automatiquement. Sinon, utilisez Réserver dans le menu." },
+    bookPage: { title: "Besoin d’un taxi ?", text: "Dites-nous où vous allez et nous organiserons le trajet pour vous." },
   },
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import { BookingProvider } from "@/components/booking/BookingProvider";
 import { Footer } from "@/components/Footer";
 import { MobileMenuProvider } from "@/components/MobileMenuContext";
 import { MobileStickyBar } from "@/components/MobileStickyBar";
@@ -26,13 +25,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
       <ToastProvider>
-        <BookingProvider>
-          <MobileMenuProvider>
-            <SkipLink />
-            <Navigation />
-            <ShellFrame>{children}</ShellFrame>
-          </MobileMenuProvider>
-        </BookingProvider>
+        <MobileMenuProvider>
+          <SkipLink />
+          <Navigation />
+          <ShellFrame>{children}</ShellFrame>
+        </MobileMenuProvider>
       </ToastProvider>
     </LanguageProvider>
   );

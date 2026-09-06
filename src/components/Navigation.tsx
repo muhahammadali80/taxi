@@ -7,7 +7,6 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { MessageCircle, Phone } from "lucide-react";
 import { HamburgerIcon } from "@/components/motion/HamburgerIcon";
 import { NAV_HREFS, SITE, getWhatsAppHref } from "@/lib/site";
-import { useBooking } from "@/components/booking/BookingProvider";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useMobileMenu } from "@/components/MobileMenuContext";
@@ -15,7 +14,6 @@ import { useT } from "@/i18n/LanguageProvider";
 
 export function Navigation() {
   const pathname = usePathname();
-  const { openBooking } = useBooking();
   const { t } = useT();
   const reduce = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
@@ -85,12 +83,10 @@ export function Navigation() {
             <LanguageSwitcher compact />
           </div>
           <Button
-            onClick={() => {
-              setOpen(false);
-              openBooking();
-            }}
+            href={getWhatsAppHref(t.bookCta.whatsappMessage)}
             variant="urgent"
             className="w-auto shrink-0 px-2.5 text-[0.8rem] whitespace-nowrap sm:px-4 sm:text-sm"
+            onClick={() => setOpen(false)}
           >
             <span className="lg:hidden">{t.sticky.book}</span>
             <span className="hidden lg:inline">{t.nav.bookNow}</span>
@@ -150,11 +146,9 @@ export function Navigation() {
             </ul>
             <div className="mt-4 grid gap-2">
               <Button
+                href={getWhatsAppHref(t.bookCta.whatsappMessage)}
                 variant="urgent"
-                onClick={() => {
-                  setOpen(false);
-                  openBooking();
-                }}
+                onClick={() => setOpen(false)}
                 className="min-h-14 w-full"
               >
                 {t.nav.bookNow}

@@ -1,5 +1,3 @@
-import { isPlusFourPassengers } from "@/lib/booking/passengers";
-
 export const SITE = {
   name: "TapTaxiBcn",
   shortName: "TapTaxiBcn",
@@ -25,28 +23,6 @@ export const IMAGES = {
   sedan: "/vehicles/sedan-barcelona.jpg",
   van: "/vehicles/van-barcelona.jpg",
 } as const;
-
-/** Pre-populate a WhatsApp message with journey details from a booking draft */
-export function getWhatsAppBookingHref(draft: {
-  pickup?: string;
-  destination?: string;
-  date?: string;
-  time?: string;
-  passengers?: number;
-  vehicleClass?: string;
-  quote?: number;
-}) {
-  const lines: string[] = ["Hi, I'd like to book a taxi:"];
-  if (draft.pickup) lines.push(`From: ${draft.pickup}`);
-  if (draft.destination) lines.push(`To: ${draft.destination}`);
-  if (draft.date) lines.push(`Date: ${draft.date}`);
-  if (draft.time) lines.push(`Time: ${draft.time}`);
-  if (draft.passengers) {
-    lines.push(`Passengers: ${isPlusFourPassengers(draft.passengers) ? "+4" : draft.passengers}`);
-  }
-  if (draft.vehicleClass) lines.push(`Vehicle: ${draft.vehicleClass}`);
-  return `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
-}
 
 export const VEHICLES = [
   {

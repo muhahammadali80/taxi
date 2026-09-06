@@ -6,14 +6,12 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { HeroJourney } from "@/components/motion/HeroCar";
-import { useBooking } from "@/components/booking/BookingProvider";
 import { IMAGES, SITE, getWhatsAppHref } from "@/lib/site";
 import { useMobileLayout } from "@/lib/use-mobile";
 import { useT } from "@/i18n/LanguageProvider";
 import { duration, easeOut } from "@/lib/motion";
 
 export function Hero() {
-  const { openBooking } = useBooking();
   const { t } = useT();
   const reduce = useReducedMotion();
   const mobile = useMobileLayout();
@@ -104,7 +102,7 @@ export function Hero() {
           transition={{ duration: duration.base, delay: 0.3, ease: easeOut }}
           className="mt-5 flex w-full flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3"
         >
-          <Button onClick={() => openBooking()} className="min-h-14 px-8 text-base">
+          <Button href={getWhatsAppHref(t.bookCta.whatsappMessage)} className="min-h-14 px-8 text-base">
             {t.hero.book}
           </Button>
           <Button href={SITE.phoneHref} variant="secondary" className="min-h-14 px-6 text-base">
