@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-export const revalidate = 10;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {

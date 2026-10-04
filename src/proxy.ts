@@ -2,14 +2,36 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/types";
 
+function hasAuthCookies(request: NextRequest): boolean {
+  return request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only intercept /admin routes — pass everything else straight through
+  // Only intercept /admin routes — pass everything else straight through immediately
   if (!pathname.startsWith("/admin")) {
     return NextResponse.next({ request });
   }
 
+  const hasCookie = hasAuthCookies(request);
+
+  // Fast path for unauthenticated requests (NO Supabase network call required):
+  // 1. If accessing /admin/login without cookies, allow immediately
+  if (pathname === "/admin/login" && !hasCookie) {
+    return NextResponse.next({ request });
+  }
+
+  // 2. If accessing protected /admin/* without cookies, redirect to login immediately
+  if (pathname !== "/admin/login" && !hasCookie) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/login";
+    return NextResponse.redirect(url);
+  }
+
+  // If auth cookies exist, verify user session with a timeout
   let supabaseResponse = NextResponse.next({ request });
   let isAuthenticated = false;
 
@@ -35,10 +57,24 @@ export async function proxy(request: NextRequest) {
       },
     );
 
-    const { data, error } = await supabase.auth.getUser();
+    // Timeout after 2.5s so proxy never hangs
+    const userPromise = supabase.auth.getUser();
+    const timeoutPromise = new Promise<{
+      data: { user: null };
+      error: Error;
+    }>((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            data: { user: null },
+            error: new Error("Auth verification timeout"),
+          }),
+        2500,
+      ),
+    );
 
-    // Only treat as authenticated if: no error, user exists, has email,
-    // and is NOT an anonymous user
+    const { data, error } = await Promise.race([userPromise, timeoutPromise]);
+
     if (
       !error &&
       data.user &&
@@ -49,7 +85,6 @@ export async function proxy(request: NextRequest) {
     }
   } catch (err) {
     console.error("[proxy] Supabase error:", err);
-    // On error: allow /admin/login through, block everything else
     if (pathname !== "/admin/login") {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
@@ -58,14 +93,14 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Not authenticated → redirect to login (but only if not already there)
+  // Not authenticated -> redirect to login
   if (!isAuthenticated && pathname !== "/admin/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
   }
 
-  // Authenticated and visiting /admin/login → redirect to dashboard
+  // Authenticated and visiting /admin/login -> redirect to dashboard
   if (isAuthenticated && pathname === "/admin/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
