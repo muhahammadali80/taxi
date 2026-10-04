@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MessageCircle, Phone } from "lucide-react";
-import { IMAGES, SITE, getWhatsAppHref } from "@/lib/site";
+import { IMAGES } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/Button";
 import { useT } from "@/i18n/LanguageProvider";
+import { useActiveDriver } from "@/hooks/useActiveDriver";
 
 export function ContactCTA() {
   const { t } = useT();
   const [linksReady, setLinksReady] = useState(false);
+  const { phone: activePhone, phoneDisplay: activePhoneDisplay, whatsappNumber: activeWhatsapp } = useActiveDriver();
 
   useEffect(() => {
     setLinksReady(true);
@@ -36,15 +38,15 @@ export function ContactCTA() {
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm text-white/65 sm:text-base">{t.contact.text}</p>
             <div className="mt-6 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-8 sm:items-center sm:flex-row">
-              <Button href={getWhatsAppHref(t.bookCta.whatsappMessage)} className="min-h-14 w-full px-8 sm:w-auto">
+              <Button href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.bookCta.whatsappMessage)}`} className="min-h-14 w-full px-8 sm:w-auto">
                 {t.contact.book}
               </Button>
-              <Button href={SITE.phoneHref} variant="secondary" className="min-h-14 w-full px-8 sm:w-auto">
+              <Button href={activePhone} variant="secondary" className="min-h-14 w-full px-8 sm:w-auto">
                 <Phone className="size-4" />
                 {t.contact.call}
-                <span className="hidden sm:inline"> {SITE.phoneDisplay}</span>
+                <span className="hidden sm:inline"> {activePhoneDisplay}</span>
               </Button>
-              <Button href={getWhatsAppHref(t.contact.whatsappMessage)} variant="secondary" className="min-h-14 w-full px-8 sm:w-auto">
+              <Button href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.contact.whatsappMessage)}`} variant="secondary" className="min-h-14 w-full px-8 sm:w-auto">
                 <MessageCircle className="size-4" />
                 {t.contact.whatsapp}
               </Button>
@@ -52,8 +54,8 @@ export function ContactCTA() {
             <p className="mt-6 min-h-5 text-sm break-words text-white/45">
               {linksReady ? (
                 <>
-                  <a href={SITE.phoneHref} className="hover:text-gold">
-                    {SITE.phoneDisplay}
+                  <a href={activePhone} className="hover:text-gold">
+                    {activePhoneDisplay}
                   </a>
                 </>
               ) : null}

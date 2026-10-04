@@ -2,11 +2,12 @@
 
 import { MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { SITE, getWhatsAppHref } from "@/lib/site";
 import { useT } from "@/i18n/LanguageProvider";
+import { useActiveDriver } from "@/hooks/useActiveDriver";
 
 export function BookCTA({ overlap = true }: { overlap?: boolean }) {
   const { t } = useT();
+  const { phone: activePhone, phoneDisplay: activePhoneDisplay, whatsappNumber: activeWhatsapp } = useActiveDriver();
 
   return (
     <section
@@ -28,21 +29,21 @@ export function BookCTA({ overlap = true }: { overlap?: boolean }) {
 
           <div className="mx-auto mt-6 flex w-full max-w-md flex-col gap-3 sm:mt-8">
             <Button
-              href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+              href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.bookCta.whatsappMessage)}`}
               className="min-h-14 w-full text-base"
             >
               <MessageCircle className="size-[18px] shrink-0" aria-hidden />
               {t.bookCta.whatsapp}
             </Button>
-            <Button href={SITE.phoneHref} variant="ghost" className="min-h-14 w-full text-base">
+            <Button href={activePhone} variant="ghost" className="min-h-14 w-full text-base">
               <Phone className="size-[18px] shrink-0" aria-hidden />
               {t.bookCta.call}
             </Button>
           </div>
 
           <p className="mt-5 text-sm text-muted">
-            <a href={SITE.phoneHref} className="font-semibold text-ink select-all hover:text-charcoal">
-              {SITE.phoneDisplay}
+            <a href={activePhone} className="font-semibold text-ink select-all hover:text-charcoal">
+              {activePhoneDisplay}
             </a>
           </p>
         </div>

@@ -37,7 +37,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
 function ShellFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideChrome = pathname.startsWith("/driver");
+  const hideChrome = pathname.startsWith("/driver") || pathname.startsWith("/admin");
 
   return (
     <>

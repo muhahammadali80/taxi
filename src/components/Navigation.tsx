@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { MessageCircle, Phone } from "lucide-react";
 import { HamburgerIcon } from "@/components/motion/HamburgerIcon";
 import { NAV_HREFS, SITE, getWhatsAppHref } from "@/lib/site";
+import { useActiveDriver } from "@/hooks/useActiveDriver";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useMobileMenu } from "@/components/MobileMenuContext";
@@ -18,6 +19,7 @@ export function Navigation() {
   const reduce = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const { open, setOpen } = useMobileMenu();
+  const { phone: activePhone, whatsappNumber: activeWhatsapp } = useActiveDriver();
   const onHome = pathname === "/";
   const compact = scrolled || open || !onHome;
 
@@ -154,11 +156,11 @@ export function Navigation() {
                 {t.nav.bookNow}
               </Button>
               <div className="grid grid-cols-2 gap-2">
-                <Button href={SITE.phoneHref} variant="secondary" className="min-h-12 w-full">
+                <Button href={activePhone} variant="secondary" className="min-h-12 w-full">
                   <Phone className="size-4" />
                   {t.sticky.call}
                 </Button>
-                <Button href={getWhatsAppHref(t.contact.whatsappMessage)} variant="secondary" className="min-h-12 w-full">
+                <Button href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.contact.whatsappMessage)}`} variant="secondary" className="min-h-12 w-full">
                   <MessageCircle className="size-4" />
                   {t.sticky.whatsapp}
                 </Button>

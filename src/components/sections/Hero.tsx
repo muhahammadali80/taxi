@@ -7,6 +7,7 @@ import { MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { HeroJourney } from "@/components/motion/HeroCar";
 import { IMAGES, SITE, getWhatsAppHref } from "@/lib/site";
+import { useActiveDriver } from "@/hooks/useActiveDriver";
 import { useMobileLayout } from "@/lib/use-mobile";
 import { useT } from "@/i18n/LanguageProvider";
 import { duration, easeOut } from "@/lib/motion";
@@ -15,6 +16,7 @@ export function Hero() {
   const { t } = useT();
   const reduce = useReducedMotion();
   const mobile = useMobileLayout();
+  const { phone: activePhone, phoneDisplay: activePhoneDisplay, whatsappNumber: activeWhatsapp } = useActiveDriver();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -102,15 +104,15 @@ export function Hero() {
           transition={{ duration: duration.base, delay: 0.3, ease: easeOut }}
           className="mt-5 flex w-full flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3"
         >
-          <Button href={getWhatsAppHref(t.bookCta.whatsappMessage)} className="min-h-14 px-8 text-base">
+          <Button href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.bookCta.whatsappMessage)}`} className="min-h-14 px-8 text-base">
             {t.hero.book}
           </Button>
-          <Button href={SITE.phoneHref} variant="secondary" className="min-h-14 px-6 text-base">
+          <Button href={activePhone} variant="secondary" className="min-h-14 px-6 text-base">
             <Phone className="size-4" />
             {t.hero.call}
-            <span className="hidden sm:inline"> {SITE.phoneDisplay}</span>
+            <span className="hidden sm:inline"> {activePhoneDisplay}</span>
           </Button>
-          <Button href={getWhatsAppHref(t.contact.whatsappMessage)} variant="secondary" className="min-h-14 px-8 text-base">
+          <Button href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.contact.whatsappMessage)}`} variant="secondary" className="min-h-14 px-8 text-base">
             <MessageCircle className="size-4" />
             {t.hero.whatsapp}
           </Button>

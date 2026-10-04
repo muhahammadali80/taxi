@@ -5,9 +5,11 @@ import { MessageCircle, Phone } from "lucide-react";
 import { NAV_HREFS, SITE, getWhatsAppHref } from "@/lib/site";
 import { useMobileMenu } from "@/components/MobileMenuContext";
 import { useT } from "@/i18n/LanguageProvider";
+import { useActiveDriver } from "@/hooks/useActiveDriver";
 
 export function Footer() {
   const { t } = useT();
+  const { phone: activePhone, phoneDisplay: activePhoneDisplay, whatsappNumber: activeWhatsapp } = useActiveDriver();
 
   return (
     <footer className="border-t border-line bg-ink text-white">
@@ -21,8 +23,8 @@ export function Footer() {
           <p className="text-sm font-semibold">{t.footer.contact}</p>
           <ul className="mt-3 space-y-1 text-sm text-white/70">
             <li>
-              <a href={SITE.phoneHref} className="flex min-h-11 items-center hover:text-gold">
-                {SITE.phoneDisplay}
+              <a href={activePhone} className="flex min-h-11 items-center hover:text-gold">
+                {activePhoneDisplay}
               </a>
             </li>
             <li className="py-2">{t.footer.hours}</li>
@@ -52,7 +54,7 @@ export function Footer() {
             ))}
             <li>
               <a
-                href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+                href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.bookCta.whatsappMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex min-h-11 items-center hover:text-gold"
@@ -97,20 +99,22 @@ export function Footer() {
 export function MobileStickyBar() {
   const { open: menuOpen } = useMobileMenu();
   const { t } = useT();
+  const { phone: activePhone, whatsappNumber: activeWhatsapp } = useActiveDriver();
+
   if (menuOpen) return null;
 
   return (
     <div className="fixed inset-x-2 bottom-0 z-40 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
       <div className="neu-float grid grid-cols-3 gap-1 rounded-[1.35rem] p-1.5 sm:gap-1.5">
         <a
-          href={SITE.phoneHref}
+          href={activePhone}
           className="neu-raised-sm flex min-h-[3.75rem] min-w-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 text-center text-[0.7rem] leading-tight font-semibold text-ink active:scale-95 sm:text-xs"
         >
           <Phone className="size-5 shrink-0" />
           <span className="max-w-full truncate">{t.sticky.call}</span>
         </a>
         <a
-          href={getWhatsAppHref(t.bookCta.whatsappMessage)}
+          href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.bookCta.whatsappMessage)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex min-h-[3.75rem] min-w-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-gold px-1 text-center text-[0.7rem] leading-tight font-bold text-ink shadow-[0_8px_18px_-6px_rgba(26,26,26,0.4)] active:scale-95 sm:text-xs"
@@ -118,7 +122,7 @@ export function MobileStickyBar() {
           <span className="max-w-full truncate">{t.sticky.book}</span>
         </a>
         <a
-          href={getWhatsAppHref(t.contact.whatsappMessage)}
+          href={`https://wa.me/${activeWhatsapp}?text=${encodeURIComponent(t.contact.whatsappMessage)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="neu-raised-sm flex min-h-[3.75rem] min-w-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 text-center text-[0.7rem] leading-tight font-semibold text-ink active:scale-95 sm:text-xs"
@@ -130,4 +134,3 @@ export function MobileStickyBar() {
     </div>
   );
 }
-
