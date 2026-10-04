@@ -7,22 +7,32 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    // Use AbortController to timeout after 5 seconds
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    // Race the Supabase query against a 5-second timeout
+    const timeout = new Promise<null>((resolve) =>
+      setTimeout(() => resolve(null), 5000),
+    );
 
-    const { data, error } = await supabase
+    const query = supabase
       .from("drivers")
       .select("name, phone")
       .eq("active", true)
-      .maybeSingle()
-      .abortSignal(controller.signal);
+      .maybeSingle();
 
-    clearTimeout(timeout);
+    const result = await Promise.race([query, timeout]);
+
+    // Timed out
+    if (result === null) {
+      console.error("[active-driver] Query timed out after 5s");
+      return NextResponse.json(
+        { name: null, phone: null },
+        { status: 200, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const { data, error } = result;
 
     if (error) {
       console.error("[active-driver] Supabase error:", error.message);
-      // If the table doesn't exist yet, return null gracefully
       return NextResponse.json(
         { name: null, phone: null },
         { status: 200, headers: { "Cache-Control": "no-store" } },
@@ -45,13 +55,8 @@ export async function GET() {
         },
       },
     );
-  } catch (err: unknown) {
-    if (err instanceof Error && err.name === "AbortError") {
-      console.error("[active-driver] Request timed out after 5s");
-    } else {
-      console.error("[active-driver] Unexpected error:", err);
-    }
-    // Always return a valid response so the public site never breaks
+  } catch (err) {
+    console.error("[active-driver] Unexpected error:", err);
     return NextResponse.json(
       { name: null, phone: null },
       { status: 200, headers: { "Cache-Control": "no-store" } },
